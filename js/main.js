@@ -2,11 +2,6 @@ import { getRandomPositiveInteger } from './utils/get-random-positive-integer.js
 
 const TEMPORARY_POSTS_COUNT = 25;
 
-const TEMPORARY_LIKES_COUNT = {
-  min: 15,
-  max: 200,
-};
-
 const TEMPORARY_AVATAR_NUMBER = {
   min: 1,
   max: 6,
@@ -42,27 +37,43 @@ const TEMPORARY_NAMES = [
   'Вашингтон',
 ];
 
+const temporaryLikesCount = {
+  min: 15,
+  max: 200,
+};
+
+const temporaryCommentsCount = {
+  min: 2,
+  max: 8,
+};
+
 const getRandomArrayElement = (elements) => elements[getRandomPositiveInteger(0, elements.length - 1)];
 
-const createRadomComments = () => {
-  const commentsCountMin = 2;
-  const commentsCountMax = 8;
+const createCommentMessage = () => {
+  let string = getRandomArrayElement(TEMPORARY_COMMENTS);
+  const text = getRandomArrayElement(TEMPORARY_COMMENTS);
+  if (text !== string) {
+    string = `${string} ${text}`;
+  }
+  return string;
+};
 
+const createRadomComments = () => {
   const createComment = (id) => ({
     id: id,
     avatar: `img/avatar-${getRandomPositiveInteger(TEMPORARY_AVATAR_NUMBER.min, TEMPORARY_AVATAR_NUMBER.max)}.svg`,
-    message: getRandomArrayElement(TEMPORARY_COMMENTS),
+    message: createCommentMessage(),
     name: getRandomArrayElement(TEMPORARY_NAMES),
   });
 
-  return new Array(getRandomPositiveInteger(commentsCountMin, commentsCountMax)).fill(null).map((currentValue, index) => createComment(index));
+  return new Array(getRandomPositiveInteger(temporaryCommentsCount.min, temporaryCommentsCount.max)).fill(null).map((currentValue, index) => createComment(index));
 };
 
 const createPost = (id) => ({
   id: id,
   url: `photos/${id + 1}.jpg`,
   description: getRandomArrayElement(TEMPORARY_DESCRIPTIONS),
-  likes: getRandomPositiveInteger(TEMPORARY_LIKES_COUNT.min, TEMPORARY_LIKES_COUNT.max),
+  likes: getRandomPositiveInteger(temporaryLikesCount.min, temporaryLikesCount.max),
   comments: createRadomComments(),
 });
 
