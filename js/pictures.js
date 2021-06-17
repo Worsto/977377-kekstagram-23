@@ -5,16 +5,20 @@ const pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
 
-const pictures = createPosts(TEMPORARY_POSTS_COUNT);
+const picturesData = createPosts(TEMPORARY_POSTS_COUNT);
 
 const picturesListFragment = document.createDocumentFragment();
 
-pictures.forEach(({url, likes, comments}) => {
+const createPicture = (data) => {
   const pictureElement = pictureTemplate.cloneNode(true);
-  pictureElement.querySelector('.picture__img').setAttribute('src', url);
-  pictureElement.querySelector('.picture__likes').textContent = likes;
-  pictureElement.querySelector('.picture__comments').textContent = comments.length;
+  pictureElement.querySelector('.picture__img').setAttribute('src', data.url);
+  pictureElement.querySelector('.picture__likes').textContent = data.likes;
+  pictureElement.querySelector('.picture__comments').textContent = data.comments.length;
   picturesListFragment.appendChild(pictureElement);
+};
+
+picturesData.forEach((picture) => {
+  createPicture(picture);
 });
 
 picturesContainer.appendChild(picturesListFragment);
