@@ -1,13 +1,18 @@
 import {createPosts} from './data.js';
-import {onPopupEscPress} from './utils/esc-press.js';
 
 const bigPicture = document.querySelector('.big-picture');
-const page = document.querySelector('body');
 
-const closeBigPicture = () => {
-  bigPicture.classList.add('hidden');
-  page.classList.remove('modal-open');
+const onPopupEscPress = (evt) => {
+  if (evt.key === 'Escape') {
+    closeBigPicture();
+  }
 };
+
+function closeBigPicture() {
+  bigPicture.classList.add('hidden');
+  document.body.classList.remove('modal-open');
+  document.removeEventListener('keydown', onPopupEscPress);
+}
 
 const showBigPicture = (data) => {
   const img = bigPicture.querySelector('.big-picture__img img');
@@ -20,7 +25,6 @@ const showBigPicture = (data) => {
 
   const commentsList = bigPicture.querySelector('.social__comments');
   const commentTemplate = bigPicture.querySelector('.social__comment');
-  const commentsArray = data.comments;
   const commentsListFragment = document.createDocumentFragment();
 
   const createComment = (commentData) => {
@@ -30,7 +34,7 @@ const showBigPicture = (data) => {
     commentsListFragment.appendChild(commentElement);
   };
 
-  commentsArray.forEach((commentData) => {
+  data.comments.forEach((commentData) => {
     createComment(commentData);
   });
 
@@ -40,9 +44,9 @@ const showBigPicture = (data) => {
   bigPicture.classList.remove('hidden');
   bigPicture.querySelector('.social__comment-count').classList.add('hidden');
   bigPicture.querySelector('.comments-loader').classList.add('hidden');
-  page.classList.add('modal-open');
+  document.body.classList.add('modal-open');
 
-  onPopupEscPress(closeBigPicture);
+  document.addEventListener('keydown', onPopupEscPress);
 };
 
 const closeButton = bigPicture.querySelector('.big-picture__cancel');
