@@ -49,8 +49,12 @@ const showBigPicture = (data) => {
   document.addEventListener('keydown', onPopupEscPress);
 };
 
+const onCloseClick = () => {
+  closeBigPicture();
+};
+
 const closeButton = bigPicture.querySelector('.big-picture__cancel');
-closeButton.addEventListener('click', closeBigPicture);
+closeButton.addEventListener('click', onCloseClick);
 
 const tempPost = createPosts(1)[0];
 showBigPicture(tempPost);
