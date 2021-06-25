@@ -1,8 +1,10 @@
+const HASHTAGS_MAX_COUNT = 5;
+const REG_EXP_SHARP_FIRST = /^#[\s\S]*$/;
+const REG_EXP_BODY = /^#[A-Za-zА-Яа-я0-9]*$/;
+const REG_EXP_LENGTH = /^#[A-Za-zА-Яа-я0-9]{1,19}$/;
+
 const uploadFile = document.querySelector('#upload-file');
 const imgUploadForm = document.querySelector('.img-upload__overlay');
-
-const HASHTAGS_MAX_COUNT = 5;
-
 const hashtagsInput = imgUploadForm.querySelector('.text__hashtags');
 const descriptionInput = imgUploadForm.querySelector('.text__description');
 
@@ -10,9 +12,9 @@ const onPopupEscPress = (evt) => {
   if (evt.key === 'Escape') {
     if (document.activeElement === hashtagsInput || document.activeElement === descriptionInput) {
       evt.stopPropagation();
-    } else {
-      closeImgUploadForm();
+      return;
     }
+    closeImgUploadForm();
   }
 };
 
@@ -43,43 +45,42 @@ uploadFile.addEventListener('change', showImgUploadForm);
 descriptionInput.addEventListener('input', () => {
   const valueLength = descriptionInput.value.length;
   const maxLength = descriptionInput.getAttribute('maxlength');
+  let customValidityMessage = '';
 
   if (valueLength > maxLength) {
-    descriptionInput.setCustomValidity(`Удалите лишние ${  valueLength - maxLength } симв.`);
-  } else {
-    descriptionInput.setCustomValidity('');
+    customValidityMessage = `Удалите лишние ${  valueLength - maxLength } симв.`;
   }
+  descriptionInput.setCustomValidity(customValidityMessage);
 
   descriptionInput.reportValidity();
 });
 
-const reSharp = /^#[\s\S]*$/;
-const reBody = /^#[A-Za-zА-Яа-я0-9]*$/;
-const reLength = /^#[A-Za-zА-Яа-я0-9]{1,19}$/;
-
-
 const validateHashtags = () => {
   const hashtags = hashtagsInput.value.replace(/^\s+| +(?= )|\s+$/g,'').toLowerCase().split(' ');
   const hashtagsSet = new Set(hashtags);
+  let customValidityMessage = '';
 
-  if (hashtags.length > HASHTAGS_MAX_COUNT) {
-    hashtagsInput.setCustomValidity(`Максимальное количество хэштегов ${HASHTAGS_MAX_COUNT}`);
-  } else if (!hashtags.every((elem) => reSharp.test(elem))) {
-    hashtagsInput.setCustomValidity('Хэштег может начинаться с символа решетки.');
-  } else if (!hashtags.every((elem) => reBody.test(elem))) {
-    hashtagsInput.setCustomValidity('Хэштег может содержать только буквы.');
-  } else if (hashtags.some((elem) => elem === '#')) {
-    hashtagsInput.setCustomValidity('Хэштег не может быть пустым.');
-  } else if (!hashtags.every((elem) => reLength.test(elem))) {
-    hashtagsInput.setCustomValidity('Хэштег не может быть длиннее 20 символов, включая решетку.');
-  } else if (hashtags.length !== hashtagsSet.size) {
-    hashtagsInput.setCustomValidity('Хэштег не должен повторяться.');
-  } else {
-    hashtagsInput.setCustomValidity('');
+  switch (true) {
+    case hashtags.length > HASHTAGS_MAX_COUNT:
+      customValidityMessage = `Максимальное количество хэштегов ${HASHTAGS_MAX_COUNT}`;
+      break;
+    case !hashtags.every((elem) => REG_EXP_SHARP_FIRST.test(elem)):
+      customValidityMessage = 'Хэштег может начинаться с символа решетки.';
+      break;
+    case !hashtags.every((elem) => REG_EXP_BODY.test(elem)):
+      customValidityMessage = 'Хэштег может содержать только буквы.';
+      break;
+    case hashtags.some((elem) => elem === '#'):
+      customValidityMessage = 'Хэштег не может быть пустым.';
+      break;
+    case !hashtags.every((elem) => REG_EXP_LENGTH.test(elem)):
+      customValidityMessage = 'Хэштег не может быть длиннее 20 символов, включая решетку.';
+      break;
+    case hashtags.length !== hashtagsSet.size:
+      customValidityMessage = 'Хэштег не должен повторяться.';
+      break;
   }
-
-  // если фокус находится в поле ввода хэш-тега, нажатие на Esc не должно приводить к закрытию формы редактирования изображения.
-
+  hashtagsInput.setCustomValidity(customValidityMessage);
 };
 
 hashtagsInput.addEventListener('input', () => {
