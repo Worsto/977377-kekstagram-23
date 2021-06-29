@@ -1,5 +1,3 @@
-import './../nouislider/nouislider.js';
-
 const SCALE_STEP = 25;
 const HASHTAGS_MAX_COUNT = 5;
 const REG_EXP_SHARP_FIRST = /^#[\s\S]*$/;
@@ -29,40 +27,75 @@ scaleChanger.addEventListener('click', changeImgScale);
 
 const formEffects = imgUploadForm.querySelector('.effects');
 const sliderElement = imgUploadForm.querySelector('.effect-level__slider');
+const effectValue = imgUploadForm.querySelector('.effect-level__value');
 let effect;
-
+const effects = {
+  'chrome': {
+    filter: 'grayscale',
+    step: 0.1,
+    unit: '',
+    min: 0,
+    max: 1,
+  },
+  'sepia': {
+    filter: 'sepia',
+    step: 0.1,
+    unit: '',
+    min: 0,
+    max: 1,
+  },
+  'marvin': {
+    filter: 'invert',
+    step: 1,
+    unit: '%',
+    min: 0,
+    max: 100,
+  },
+  'phobos': {
+    filter: 'blur',
+    step: 0.1,
+    unit: 'px',
+    min: 0,
+    max: 3,
+  },
+  'heat': {
+    filter: 'brightness',
+    step: 0.1,
+    unit: '',
+    min: 1,
+    max: 3,
+  },
+};
 
 const applyEffect = (evt) => {
   image.classList.remove(`effects__preview--${effect}`);
   effect = evt.target.value;
+
+  if (sliderElement.noUiSlider && effect !== 'none') {sliderElement.noUiSlider.destroy();}
+
   if (effect === 'none') {
+    sliderElement.noUiSlider.destroy();
+    image.style.filter = '';
     return;
+  } else {
+    noUiSlider.create(sliderElement, {
+      range: {
+        min: effects[effect].min,
+        max: effects[effect].max,
+      },
+      start: effects[effect].max,
+      step: effects[effect].step,
+    });
+
+    sliderElement.noUiSlider.on('update', (_, handle, unencoded) => {
+      effectValue.value = unencoded[handle];
+      image.style.filter = `${effects[effect].filter}(${unencoded[handle] + effects[effect].unit})`;
+    });
   }
   image.classList.add(`effects__preview--${effect}`);
-
-  if (sliderElement.noUiSlider) { sliderElement.noUiSLider.destroy();}
-  noUiSlider.create(sliderElement, {
-    range: {
-      min: 0,
-      max: 100,
-    },
-    start: 100,
-  });
 };
 
 formEffects.addEventListener('change', applyEffect);
-
-
-// Наложение эффекта на изображение:
-// Интенсивность эффекта регулируется перемещением ползунка в слайдере. Слайдер реализуется сторонней библиотекой для реализации слайдеров noUiSlider. Уровень эффекта записывается в поле .effect-level__value. При изменении уровня интенсивности эффекта (предоставляется API слайдера), CSS-стили картинки внутри .img-upload__preview обновляются следующим образом:
-// Для эффекта «Хром» — filter: grayscale(0..1) с шагом 0.1;
-// Для эффекта «Сепия» — filter: sepia(0..1) с шагом 0.1;
-// Для эффекта «Марвин» — filter: invert(0..100%) с шагом 1%;
-// Для эффекта «Фобос» — filter: blur(0..3px) с шагом 0.1px;
-// Для эффекта «Зной» — filter: brightness(1..3) с шагом 0.1;
-// Для эффекта «Оригинал» CSS-стили filter удаляются.
-// При выборе эффекта «Оригинал» слайдер скрывается.
-// При переключении эффектов, уровень насыщенности сбрасывается до начального значения (100%): слайдер, CSS-стиль изображения и значение поля должны обновляться.
 
 const hashtagsInput = imgUploadForm.querySelector('.text__hashtags');
 const descriptionInput = imgUploadForm.querySelector('.text__description');
@@ -89,7 +122,9 @@ function closeImgUploadForm() {
   document.removeEventListener('keydown', onPopupEscPress);
   uploadFile.value = '';
   image.style.transform = '';
+  image.style.filter = '';
   image.classList.remove(`effects__preview--${effect}`);
+  if (sliderElement.noUiSlider && effect !== 'none') {sliderElement.noUiSlider.destroy();}
 }
 
 const onCloseClick = () => {
