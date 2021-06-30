@@ -52,33 +52,22 @@ const showBigPicture = (data) => {
   commentsList.appendChild(commentsListFragment);
   commentsListCount = commentsList.querySelectorAll('li').length;
 
-  // если меньше 5, рисуем
-  // если больше 5 - рисуем первые 5 и кнопку Показать еще
-  // Сохраняем количество отрендеренных комментариев
-  // на кнопку вешаем листенер клика
-  // В листенере - рендерим +5 или сколько осталось, если осталось меньше 5. В первом случае сохраняем новое количество в переменную, во втором скрываем кнопку
-  // открываем окно с фоткой - значение отрендеренных комментариев сбрасываем
-
-
-  // блок события
   const commentsRender = function() {
     commentsListFragment.textContent = '';
 
     const commentsLeftCount = data.comments.length - commentsListCount;
-    if (commentsLeftCount <= COMMENTS_PART_COUNT) {
-      for (let i = 0; i < commentsLeftCount; i++) {
-        createComment(data.comments[i + commentsListCount]);
-      }
-      loadButton.classList.add('hidden');
-      commentsLoadedCounter.textContent = data.comments.length;
-    } else {
-      for (let i = 0; i < COMMENTS_PART_COUNT; i++) {
-        createComment(data.comments[i + commentsListCount]);
-      }
-      commentsLoadedCounter.textContent = commentsListCount + COMMENTS_PART_COUNT;
+    const commentsToLoadCount = commentsLeftCount <= COMMENTS_PART_COUNT ? commentsLeftCount : COMMENTS_PART_COUNT;
+
+    for (let i = 0; i < commentsToLoadCount; i++) {
+      createComment(data.comments[i + commentsListCount]);
     }
     commentsList.appendChild(commentsListFragment);
     commentsListCount = commentsList.querySelectorAll('li').length;
+    commentsLoadedCounter.textContent = commentsListCount;
+
+    if (commentsListCount === data.comments.length) {
+      loadButton.classList.add('hidden');
+    }
   };
 
   loadButton.addEventListener('click', commentsRender);
