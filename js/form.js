@@ -12,8 +12,17 @@ const scaleChanger = imgUploadForm.querySelector('.scale');
 const scaleValue = imgUploadForm.querySelector('.scale__control--value');
 
 const changeImgScale = (evt) => {
-  const step = evt.target.matches('.scale__control--bigger') ? SCALE_STEP : -SCALE_STEP;
-  const border = evt.target.matches('.scale__control--bigger') ? '100%' : '25%';
+  let step = 0;
+  let border;
+
+  if (evt.target.matches('.scale__control--bigger')) {
+    step = SCALE_STEP;
+    border = '100%';
+  } else if (evt.target.matches('.scale__control--smaller')) {
+    step = -SCALE_STEP;
+    border = '25%';
+  }
+
   if (scaleValue.value !== border) {
     scaleValue.value = `${+scaleValue.value.slice(0, -1) + step}%`;
     image.style.transform = `scale(${+scaleValue.value.slice(0, -1) / 100})`;
@@ -26,8 +35,9 @@ const changeImgScale = (evt) => {
 scaleChanger.addEventListener('click', changeImgScale);
 
 const formEffects = imgUploadForm.querySelector('.effects');
-const sliderElement = imgUploadForm.querySelector('.effect-level__slider');
-const effectValue = imgUploadForm.querySelector('.effect-level__value');
+const effectFieldset = imgUploadForm.querySelector('.effect-level');
+const sliderElement = effectFieldset.querySelector('.effect-level__slider');
+const effectValue = effectFieldset.querySelector('.effect-level__value');
 let effect;
 const effects = {
   'chrome': {
@@ -71,27 +81,30 @@ const applyEffect = (evt) => {
   image.classList.remove(`effects__preview--${effect}`);
   effect = evt.target.value;
 
-  if (sliderElement.noUiSlider && effect !== 'none') {sliderElement.noUiSlider.destroy();}
+  if (sliderElement.noUiSlider && effect !== 'none') {
+    sliderElement.noUiSlider.destroy();
+  }
 
   if (effect === 'none') {
     sliderElement.noUiSlider.destroy();
     image.style.filter = '';
+    effectFieldset.style.display = 'none';
     return;
-  } else {
-    noUiSlider.create(sliderElement, {
-      range: {
-        min: effects[effect].min,
-        max: effects[effect].max,
-      },
-      start: effects[effect].max,
-      step: effects[effect].step,
-    });
-
-    sliderElement.noUiSlider.on('update', (_, handle, unencoded) => {
-      effectValue.value = unencoded[handle];
-      image.style.filter = `${effects[effect].filter}(${unencoded[handle] + effects[effect].unit})`;
-    });
   }
+  effectFieldset.style.display = '';
+  noUiSlider.create(sliderElement, {
+    range: {
+      min: effects[effect].min,
+      max: effects[effect].max,
+    },
+    start: effects[effect].max,
+    step: effects[effect].step,
+  });
+
+  sliderElement.noUiSlider.on('update', (_, handle, unencoded) => {
+    effectValue.value = unencoded[handle];
+    image.style.filter = `${effects[effect].filter}(${unencoded[handle] + effects[effect].unit})`;
+  });
   image.classList.add(`effects__preview--${effect}`);
 };
 
@@ -114,6 +127,7 @@ const showImgUploadForm = () => {
   imgUploadForm.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscPress);
+  effectFieldset.style.display = 'none';
 };
 
 function closeImgUploadForm() {
@@ -124,7 +138,9 @@ function closeImgUploadForm() {
   image.style.transform = '';
   image.style.filter = '';
   image.classList.remove(`effects__preview--${effect}`);
-  if (sliderElement.noUiSlider && effect !== 'none') {sliderElement.noUiSlider.destroy();}
+  if (sliderElement.noUiSlider && effect !== 'none') {
+    sliderElement.noUiSlider.destroy();
+  }
 }
 
 const onCloseClick = () => {

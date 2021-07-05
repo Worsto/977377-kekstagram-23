@@ -2,6 +2,7 @@ import {createPosts} from './data.js';
 
 const COMMENTS_PART_COUNT = 5;
 
+const picturesContainer = document.querySelector('.pictures');
 const bigPicture = document.querySelector('.big-picture');
 const commentsCounter = bigPicture.querySelector('.comments-count');
 const commentsLoadedCounter = bigPicture.querySelector('.comments-loaded-count');
@@ -21,6 +22,7 @@ const showBigPicture = (data) => {
 
   bigPicture.querySelector('.social__caption').textContent = data.description;
   bigPicture.querySelector('.likes-count').textContent = data.likes;
+  commentsLoadedCounter.textContent = COMMENTS_PART_COUNT;
   commentsCounter.textContent = data.comments.length;
 
   const commentsList = bigPicture.querySelector('.social__comments');
@@ -92,5 +94,9 @@ const showBigPicture = (data) => {
   closeButton.addEventListener('click', onCloseClick);
 };
 
-const tempPost = createPosts(1)[0];
-showBigPicture(tempPost);
+picturesContainer.addEventListener('click', (evt) => {
+  if (evt.target.matches('.picture__img')) {
+    evt.preventDefault();
+    showBigPicture(createPosts(25)[+/\d+/.exec(evt.target.id)]);
+  }
+});
