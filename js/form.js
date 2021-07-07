@@ -35,8 +35,6 @@ const changeImgScale = (evt) => {
   }
 };
 
-scaleChanger.addEventListener('click', changeImgScale);
-
 const formEffects = imgUploadOverlay.querySelector('.effects');
 const effectFieldset = imgUploadOverlay.querySelector('.effect-level');
 const sliderElement = effectFieldset.querySelector('.effect-level__slider');
@@ -111,8 +109,6 @@ const applyEffect = (evt) => {
   image.classList.add(`effects__preview--${effect}`);
 };
 
-formEffects.addEventListener('change', applyEffect);
-
 const hashtagsInput = imgUploadOverlay.querySelector('.text__hashtags');
 const descriptionInput = imgUploadOverlay.querySelector('.text__description');
 
@@ -124,13 +120,6 @@ const onPopupEscPress = (evt) => {
     }
     closeImgUploadForm();
   }
-};
-
-const showImgUploadForm = () => {
-  imgUploadOverlay.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onPopupEscPress);
-  effectFieldset.style.display = 'none';
 };
 
 function closeImgUploadForm() {
@@ -153,9 +142,6 @@ const onCloseClick = () => {
 };
 
 const closeButton = imgUploadOverlay.querySelector('.img-upload__cancel');
-closeButton.addEventListener('click', onCloseClick);
-
-uploadFile.addEventListener('change', showImgUploadForm);
 
 const validateDescription = () => {
   const valueLength = descriptionInput.value.length;
@@ -167,11 +153,6 @@ const validateDescription = () => {
   }
   descriptionInput.setCustomValidity(customValidityMessage);
 };
-
-descriptionInput.addEventListener('input', () => {
-  validateDescription();
-  descriptionInput.reportValidity();
-});
 
 const validateHashtags = () => {
   const hashtags = hashtagsInput.value.replace(/^\s+| +(?= )|\s+$/g,'').toLowerCase().split(' ');
@@ -200,11 +181,6 @@ const validateHashtags = () => {
   }
   hashtagsInput.setCustomValidity(customValidityMessage);
 };
-
-hashtagsInput.addEventListener('input', () => {
-  validateHashtags();
-  hashtagsInput.reportValidity();
-});
 
 const setFormSubmit = (onSuccess, onError) => {
   imgForm.addEventListener('submit', (evt) => {
@@ -263,4 +239,28 @@ const setFormError = () => {
   setPopupCloser('error');
 };
 
-setFormSubmit(setFormSuccess, setFormError);
+const showImgUploadForm = () => {
+  imgUploadOverlay.classList.remove('hidden');
+  document.body.classList.add('modal-open');
+  document.addEventListener('keydown', onPopupEscPress);
+  effectFieldset.style.display = 'none';
+  scaleChanger.addEventListener('click', changeImgScale);
+  formEffects.addEventListener('change', applyEffect);
+  closeButton.addEventListener('click', onCloseClick);
+  descriptionInput.addEventListener('input', () => {
+    validateDescription();
+    descriptionInput.reportValidity();
+  });
+  hashtagsInput.addEventListener('input', () => {
+    validateHashtags();
+    hashtagsInput.reportValidity();
+  });
+  setFormSubmit(setFormSuccess, setFormError);
+};
+
+const setUploadButton = () => {
+  uploadFile.addEventListener('change', showImgUploadForm);
+};
+
+
+export {setUploadButton};

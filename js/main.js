@@ -1,4 +1,4 @@
-import './form.js';
+import {setUploadButton} from './form.js';
 import {renderPictures} from './pictures.js';
 import {renderBigPicture} from './big-picture.js';
 import {getData} from './api.js';
@@ -9,3 +9,4 @@ const render = (data) => {
 };
 
 getData(render);
+setUploadButton();
