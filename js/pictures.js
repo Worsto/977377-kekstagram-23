@@ -1,11 +1,7 @@
-import {createPosts, TEMPORARY_POSTS_COUNT} from './data.js';
-
 const picturesContainer = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
-
-const picturesData = createPosts(TEMPORARY_POSTS_COUNT);
 
 const picturesListFragment = document.createDocumentFragment();
 
@@ -19,8 +15,11 @@ const createPicture = (data) => {
   picturesListFragment.appendChild(pictureElement);
 };
 
-picturesData.forEach((picture) => {
-  createPicture(picture);
-});
+const renderPictures = (data) => {
+  data.forEach((picture) => {
+    createPicture(picture);
+  });
+  picturesContainer.appendChild(picturesListFragment);
+};
 
-picturesContainer.appendChild(picturesListFragment);
+export {renderPictures};

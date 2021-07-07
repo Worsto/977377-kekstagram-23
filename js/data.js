@@ -1,7 +1,7 @@
 import { getRandomPositiveInteger } from './utils/get-random-positive-integer.js';
 import { getRandomArrayElement } from './utils/get-random-array-element.js';
 
-export const TEMPORARY_POSTS_COUNT = 25;
+const TEMPORARY_POSTS_COUNT = 25;
 
 const TEMPORARY_AVATAR_NUMBER = {
   min: 1,
@@ -76,4 +76,6 @@ const createPost = (id) => ({
   comments: createRadomComments(),
 });
 
-export const createPosts = (count) => new Array(count).fill(null).map((currentValue, index) => createPost(index));
+const createPosts = (count) => new Array(count).fill(null).map((currentValue, index) => createPost(index));
+
+export {TEMPORARY_POSTS_COUNT, createPosts};

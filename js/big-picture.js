@@ -1,5 +1,3 @@
-import {createPosts} from './data.js';
-
 const COMMENTS_PART_COUNT = 5;
 
 const picturesContainer = document.querySelector('.pictures');
@@ -94,9 +92,12 @@ const showBigPicture = (data) => {
   closeButton.addEventListener('click', onCloseClick);
 };
 
-picturesContainer.addEventListener('click', (evt) => {
-  if (evt.target.matches('.picture__img')) {
-    evt.preventDefault();
-    showBigPicture(createPosts(25)[+/\d+/.exec(evt.target.id)]);
-  }
-});
+const renderBigPicture = (data) => {
+  picturesContainer.addEventListener('click', (evt) => {
+    if (evt.target.matches('.picture__img')) {
+      evt.preventDefault();
+      showBigPicture(data[+/\d+/.exec(evt.target.id)]);
+    }
+  });};
+
+export {renderBigPicture};

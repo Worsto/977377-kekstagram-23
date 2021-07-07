@@ -1,15 +1,18 @@
+import {sendData} from './api.js';
+
 const SCALE_STEP = 25;
 const HASHTAGS_MAX_COUNT = 5;
 const REG_EXP_SHARP_FIRST = /^#[\s\S]*$/;
 const REG_EXP_BODY = /^#[A-Za-zА-Яа-я0-9]*$/;
 const REG_EXP_LENGTH = /^#[A-Za-zА-Яа-я0-9]{1,19}$/;
 
-const uploadFile = document.querySelector('#upload-file');
-const imgUploadForm = document.querySelector('.img-upload__overlay');
-const image = imgUploadForm.querySelector('.img-upload__preview img');
+const imgForm = document.querySelector('.img-upload__form');
+const uploadFile = imgForm.querySelector('#upload-file');
+const imgUploadOverlay = imgForm.querySelector('.img-upload__overlay');
+const image = imgUploadOverlay.querySelector('.img-upload__preview img');
 
-const scaleChanger = imgUploadForm.querySelector('.scale');
-const scaleValue = imgUploadForm.querySelector('.scale__control--value');
+const scaleChanger = imgUploadOverlay.querySelector('.scale');
+const scaleValue = imgUploadOverlay.querySelector('.scale__control--value');
 
 const changeImgScale = (evt) => {
   let step = 0;
@@ -34,8 +37,8 @@ const changeImgScale = (evt) => {
 
 scaleChanger.addEventListener('click', changeImgScale);
 
-const formEffects = imgUploadForm.querySelector('.effects');
-const effectFieldset = imgUploadForm.querySelector('.effect-level');
+const formEffects = imgUploadOverlay.querySelector('.effects');
+const effectFieldset = imgUploadOverlay.querySelector('.effect-level');
 const sliderElement = effectFieldset.querySelector('.effect-level__slider');
 const effectValue = effectFieldset.querySelector('.effect-level__value');
 let effect;
@@ -110,8 +113,8 @@ const applyEffect = (evt) => {
 
 formEffects.addEventListener('change', applyEffect);
 
-const hashtagsInput = imgUploadForm.querySelector('.text__hashtags');
-const descriptionInput = imgUploadForm.querySelector('.text__description');
+const hashtagsInput = imgUploadOverlay.querySelector('.text__hashtags');
+const descriptionInput = imgUploadOverlay.querySelector('.text__description');
 
 const onPopupEscPress = (evt) => {
   if (evt.key === 'Escape') {
@@ -124,14 +127,14 @@ const onPopupEscPress = (evt) => {
 };
 
 const showImgUploadForm = () => {
-  imgUploadForm.classList.remove('hidden');
+  imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscPress);
   effectFieldset.style.display = 'none';
 };
 
 function closeImgUploadForm() {
-  imgUploadForm.classList.add('hidden');
+  imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
   document.removeEventListener('keydown', onPopupEscPress);
   uploadFile.value = '';
@@ -141,13 +144,15 @@ function closeImgUploadForm() {
   if (sliderElement.noUiSlider && effect !== 'none') {
     sliderElement.noUiSlider.destroy();
   }
+  hashtagsInput.value = '';
+  descriptionInput.value = '';
 }
 
 const onCloseClick = () => {
   closeImgUploadForm();
 };
 
-const closeButton = imgUploadForm.querySelector('.img-upload__cancel');
+const closeButton = imgUploadOverlay.querySelector('.img-upload__cancel');
 closeButton.addEventListener('click', onCloseClick);
 
 uploadFile.addEventListener('change', showImgUploadForm);
@@ -200,3 +205,62 @@ hashtagsInput.addEventListener('input', () => {
   validateHashtags();
   hashtagsInput.reportValidity();
 });
+
+const setFormSubmit = (onSuccess, onError) => {
+  imgForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const formData = new FormData(evt.target);
+
+    sendData(onSuccess, onError, formData);
+  });
+};
+
+const setPopupCloser = (status) => {
+  const popup = document.querySelector(`.${status}`);
+  const onEscPress = (evt) => {
+    if (evt.key === 'Escape') {
+      closePopup();
+    }
+  };
+
+  const onVoidPress = (evt) => {
+    if (evt.target.matches(`.${status}`)) {
+      closePopup();
+    }
+  };
+
+  function closePopup() {
+    popup.remove();
+    document.removeEventListener('keydown', onEscPress);
+    document.removeEventListener('click', onVoidPress);
+  }
+
+  const button = document.querySelector(`.${status}__button`);
+  button.addEventListener('click', closePopup);
+  document.addEventListener('keydown', onEscPress);
+  document.addEventListener('click', onVoidPress);
+};
+
+const showStatusMessage = (status) => {
+  const template = document.querySelector(`#${status}`)
+    .content
+    .querySelector(`.${status}`);
+
+  const element = template.cloneNode(true);
+  document.body.appendChild(element);
+};
+
+const setFormSuccess = () => {
+  closeImgUploadForm();
+  showStatusMessage('success');
+  setPopupCloser('success');
+};
+
+const setFormError = () => {
+  closeImgUploadForm();
+  showStatusMessage('error');
+  setPopupCloser('error');
+};
+
+setFormSubmit(setFormSuccess, setFormError);
