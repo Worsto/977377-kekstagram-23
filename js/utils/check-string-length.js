@@ -1,1 +1,3 @@
-export const checkStringLength = (string, length) => string.length <= length;
+const checkStringLength = (string, length) => string.length <= length;
+
+export {checkStringLength};
