@@ -3,10 +3,8 @@ import {renderPictures} from './pictures.js';
 import {renderBigPicture} from './big-picture.js';
 import {getData} from './api.js';
 
-const render = (data) => {
+getData((data) => {
   renderPictures(data);
   renderBigPicture(data);
-};
-
-getData(render);
+});
 setUploadButton();

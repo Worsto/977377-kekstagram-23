@@ -1,17 +1,12 @@
 import {showAlert} from './utils/show-alert.js';
 
+const LINK_DATA = 'https://23.javascript.pages.academy/kekstagram/data';
+const LINK_FORM = 'https://23.javascript.pages.academy/kekstagram';
+
 const getData = (onSuccess) => {
-  fetch('https://23.javascript.pages.academy/kekstagram/data')
-    .then((response) => {
-      if (response.ok) {
-        return response.json();
-      } else {
-        showAlert('Не удалось загрузить данные. Попробуйте перезагрузить страницу');
-      }
-    })
-    .then((picturesData) => {
-      onSuccess(picturesData);
-    })
+  fetch(LINK_DATA)
+    .then((response) => response.json())
+    .then((data) => onSuccess(data))
     .catch(() => {
       showAlert('Не удалось загрузить данные. Попробуйте перезагрузить страницу');
     });
@@ -19,7 +14,7 @@ const getData = (onSuccess) => {
 
 const sendData = (onSuccess, onError, body) => {
   fetch(
-    'https://23.javascript.pages.academy/kekstagram',
+    LINK_FORM,
     {
       method: 'POST',
       body: body,
