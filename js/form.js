@@ -135,6 +135,7 @@ function closeImgUploadForm() {
   }
   hashtagsInput.value = '';
   descriptionInput.value = '';
+  imgUploadOverlay.querySelector('#effect-none').checked = true;
 }
 
 const onCloseClick = () => {
