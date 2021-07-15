@@ -207,7 +207,7 @@ const setPopupCloser = (status) => {
   };
 
   function closePopup() {
-    popup.remove();
+    popup.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
     document.removeEventListener('click', onVoidPress);
   }
@@ -224,7 +224,12 @@ const showStatusMessage = (status) => {
     .querySelector(`.${status}`);
 
   const element = template.cloneNode(true);
-  document.body.appendChild(element);
+  element.setAttribute('id', `popup-${status}`);
+  if (!document.querySelector(`#popup-${status}`)) {
+    document.body.appendChild(element);
+  } else {
+    document.querySelector(`#popup-${status}`).classList.remove('hidden');
+  }
 };
 
 const setFormSuccess = () => {
