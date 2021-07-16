@@ -4,6 +4,11 @@ const FILTER_RANDOM_COUNT = 10;
 
 const filters = document.querySelector('.img-filters');
 const filtersForm = filters.querySelector('.img-filters__form');
+const FilterNames = {
+  DEFAULT: 'default',
+  RANDOM: 'random',
+  DISCUSSED: 'discussed',
+};
 
 const comparePictureComments = (pictureA, pictureB) => {
   const commentsA = pictureA.comments.length;
@@ -28,16 +33,16 @@ const setFilter = (data, cb) => {
     let dataCopy = data.slice();
     const clickValue = evt.target.id;
     switch(clickValue) {
-      case 'filter-default':
-        changeFilterButtonStyle('default');
+      case `filter-${FilterNames.DEFAULT}`:
+        changeFilterButtonStyle(FilterNames.DEFAULT);
         break;
-      case 'filter-random':
-        changeFilterButtonStyle('random');
+      case `filter-${FilterNames.RANDOM}`:
+        changeFilterButtonStyle(FilterNames.RANDOM);
         shuffleArray(dataCopy);
         dataCopy = dataCopy.slice(0, FILTER_RANDOM_COUNT);
         break;
-      case 'filter-discussed':
-        changeFilterButtonStyle('discussed');
+      case `filter-${FilterNames.DISCUSSED}`:
+        changeFilterButtonStyle(FilterNames.DISCUSSED);
         dataCopy.sort(comparePictureComments);
         break;
     }
