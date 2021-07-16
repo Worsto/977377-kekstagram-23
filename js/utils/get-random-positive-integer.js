@@ -1,7 +1,7 @@
 // Функция взята из интернета и доработана
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
 
-function getRandomPositiveInteger (min, max) {
+const getRandomPositiveInteger = (min, max) => {
   // Чтобы не заставлять пользователя нашей функции помнить порядок аргументов,
   // реализуем поддержку передачи минимального и максимального значения в любом порядке,
   // а какое из них большее и меньшее вычислим с помощью Math.min и Math.max.
@@ -25,6 +25,6 @@ function getRandomPositiveInteger (min, max) {
   // И в конце с помощью метода Math.floor мы округляем полученный результат,
   // потому что Math.random() генерирует только дробные числа и ноль.
   return Math.floor(result);
-}
+};
 
 export {getRandomPositiveInteger};

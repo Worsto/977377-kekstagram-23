@@ -2,8 +2,7 @@ const picturesContainer = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
-
-const picturesListFragment = document.createDocumentFragment();
+let picturesListFragment = '';
 
 const createPicture = (data) => {
   const pictureElement = pictureTemplate.cloneNode(true);
@@ -16,6 +15,12 @@ const createPicture = (data) => {
 };
 
 const renderPictures = (data) => {
+  const picturesList = picturesContainer.querySelectorAll('.picture');
+  picturesList.forEach((elem)=> {
+    elem.parentNode.removeChild(elem);
+  });
+
+  picturesListFragment = document.createDocumentFragment();
   data.forEach((picture) => {
     createPicture(picture);
   });

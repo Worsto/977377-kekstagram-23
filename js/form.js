@@ -1,40 +1,22 @@
 import {sendData} from './api.js';
 
-const SCALE_STEP = 25;
 const HASHTAGS_MAX_COUNT = 5;
 const REG_EXP_SHARP_FIRST = /^#[\s\S]*$/;
 const REG_EXP_BODY = /^#[A-Za-zА-Яа-я0-9]*$/;
 const REG_EXP_LENGTH = /^#[A-Za-zА-Яа-я0-9]{1,19}$/;
+const PICTURE_SCALE_STEP = 25;
+const PICTURE_SCALE_DEFAULT = 100;
+const PICTURE_SCALE_MAX = 100;
+const PICTURE_SCALE_MIN = 25;
+const DEFAULT_EFFECT = 'none';
+
 
 const imgForm = document.querySelector('.img-upload__form');
 const uploadFile = imgForm.querySelector('#upload-file');
 const imgUploadOverlay = imgForm.querySelector('.img-upload__overlay');
 const image = imgUploadOverlay.querySelector('.img-upload__preview img');
-
 const scaleChanger = imgUploadOverlay.querySelector('.scale');
 const scaleValue = imgUploadOverlay.querySelector('.scale__control--value');
-
-const changeImgScale = (evt) => {
-  let step = 0;
-  let border;
-
-  if (evt.target.matches('.scale__control--bigger')) {
-    step = SCALE_STEP;
-    border = '100%';
-  } else if (evt.target.matches('.scale__control--smaller')) {
-    step = -SCALE_STEP;
-    border = '25%';
-  }
-
-  if (scaleValue.value !== border) {
-    scaleValue.value = `${+scaleValue.value.slice(0, -1) + step}%`;
-    image.style.transform = `scale(${+scaleValue.value.slice(0, -1) / 100})`;
-    if (scaleValue.value === '100%') {
-      image.style.transform = '';
-    }
-  }
-};
-
 const formEffects = imgUploadOverlay.querySelector('.effects');
 const effectFieldset = imgUploadOverlay.querySelector('.effect-level');
 const sliderElement = effectFieldset.querySelector('.effect-level__slider');
@@ -77,19 +59,45 @@ const effects = {
     max: 3,
   },
 };
+const hashtagsInput = imgUploadOverlay.querySelector('.text__hashtags');
+const descriptionInput = imgUploadOverlay.querySelector('.text__description');
+const closeButton = imgUploadOverlay.querySelector('.img-upload__cancel');
+
+
+const changeImgScale = (evt) => {
+  let step = 0;
+  let border;
+
+  if (evt.target.matches('.scale__control--bigger')) {
+    step = PICTURE_SCALE_STEP;
+    border = `${PICTURE_SCALE_MAX}%`;
+  } else if (evt.target.matches('.scale__control--smaller')) {
+    step = -PICTURE_SCALE_STEP;
+    border = `${PICTURE_SCALE_MIN}%`;
+  }
+
+  if (scaleValue.value !== border) {
+    scaleValue.value = `${+scaleValue.value.slice(0, -1) + step}%`;
+    image.style.transform = `scale(${+scaleValue.value.slice(0, -1) / 100})`;
+    if (scaleValue.value === `${PICTURE_SCALE_DEFAULT}%`) {
+      image.style.transform = '';
+    }
+  }
+};
+
 
 const applyEffect = (evt) => {
   image.classList.remove(`effects__preview--${effect}`);
   effect = evt.target.value;
 
-  if (sliderElement.noUiSlider && effect !== 'none') {
+  if (sliderElement.noUiSlider && effect !== DEFAULT_EFFECT) {
     sliderElement.noUiSlider.destroy();
   }
 
-  if (effect === 'none') {
+  if (effect === DEFAULT_EFFECT) {
     sliderElement.noUiSlider.destroy();
     image.style.filter = '';
-    effectFieldset.style.display = 'none';
+    effectFieldset.style.display = DEFAULT_EFFECT;
     return;
   }
   effectFieldset.style.display = '';
@@ -109,9 +117,6 @@ const applyEffect = (evt) => {
   image.classList.add(`effects__preview--${effect}`);
 };
 
-const hashtagsInput = imgUploadOverlay.querySelector('.text__hashtags');
-const descriptionInput = imgUploadOverlay.querySelector('.text__description');
-
 const onPopupEscPress = (evt) => {
   if (evt.key === 'Escape') {
     if (document.activeElement === hashtagsInput || document.activeElement === descriptionInput) {
@@ -122,6 +127,7 @@ const onPopupEscPress = (evt) => {
   }
 };
 
+// function declaration сделано для линтера
 function closeImgUploadForm() {
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
@@ -130,18 +136,18 @@ function closeImgUploadForm() {
   image.style.transform = '';
   image.style.filter = '';
   image.classList.remove(`effects__preview--${effect}`);
-  if (sliderElement.noUiSlider && effect !== 'none') {
+  if (sliderElement.noUiSlider && effect !== DEFAULT_EFFECT) {
     sliderElement.noUiSlider.destroy();
   }
   hashtagsInput.value = '';
   descriptionInput.value = '';
+  imgUploadOverlay.querySelector('#effect-none').checked = true;
+  scaleValue.value = `${PICTURE_SCALE_DEFAULT}%`;
 }
 
 const onCloseClick = () => {
   closeImgUploadForm();
 };
-
-const closeButton = imgUploadOverlay.querySelector('.img-upload__cancel');
 
 const validateDescription = () => {
   const valueLength = descriptionInput.value.length;
@@ -206,8 +212,9 @@ const setPopupCloser = (status) => {
     }
   };
 
+  // function declaration сделано для линтера
   function closePopup() {
-    popup.remove();
+    popup.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
     document.removeEventListener('click', onVoidPress);
   }
@@ -224,7 +231,12 @@ const showStatusMessage = (status) => {
     .querySelector(`.${status}`);
 
   const element = template.cloneNode(true);
-  document.body.appendChild(element);
+  element.setAttribute('id', `popup-${status}`);
+  if (!document.querySelector(`#popup-${status}`)) {
+    document.body.appendChild(element);
+  } else {
+    document.querySelector(`#popup-${status}`).classList.remove('hidden');
+  }
 };
 
 const setFormSuccess = () => {
@@ -243,7 +255,7 @@ const showImgUploadForm = () => {
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscPress);
-  effectFieldset.style.display = 'none';
+  effectFieldset.style.display = DEFAULT_EFFECT;
   scaleChanger.addEventListener('click', changeImgScale);
   formEffects.addEventListener('change', applyEffect);
   closeButton.addEventListener('click', onCloseClick);
@@ -261,6 +273,5 @@ const showImgUploadForm = () => {
 const setUploadButton = () => {
   uploadFile.addEventListener('change', showImgUploadForm);
 };
-
 
 export {setUploadButton};

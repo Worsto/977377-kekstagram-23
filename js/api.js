@@ -1,4 +1,3 @@
-
 const LINK_DATA = 'https://23.javascript.pages.academy/kekstagram/data';
 const LINK_FORM = 'https://23.javascript.pages.academy/kekstagram';
 
