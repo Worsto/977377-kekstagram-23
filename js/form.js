@@ -127,6 +127,7 @@ const onPopupEscPress = (evt) => {
   }
 };
 
+// function declaration сделано для линтера
 function closeImgUploadForm() {
   imgUploadOverlay.classList.add('hidden');
   document.body.classList.remove('modal-open');
@@ -211,6 +212,7 @@ const setPopupCloser = (status) => {
     }
   };
 
+  // function declaration сделано для линтера
   function closePopup() {
     popup.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);

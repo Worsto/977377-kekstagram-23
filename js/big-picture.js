@@ -15,8 +15,8 @@ const showBigPicture = (data) => {
   };
 
   const img = bigPicture.querySelector('.big-picture__img img');
-  img.setAttribute('alt', data.description);
-  img.setAttribute('src', data.url);
+  img.alt = data.description;
+  img.src = data.url;
 
   bigPicture.querySelector('.social__caption').textContent = data.description;
   bigPicture.querySelector('.likes-count').textContent = data.likes;
@@ -77,6 +77,7 @@ const showBigPicture = (data) => {
 
   document.addEventListener('keydown', onPopupEscPress);
 
+  // function declaration сделано для линтера
   function closeBigPicture() {
     bigPicture.classList.add('hidden');
     document.body.classList.remove('modal-open');
@@ -98,6 +99,7 @@ const renderBigPicture = (data) => {
       evt.preventDefault();
       showBigPicture(data[+/\d+/.exec(evt.target.id)]);
     }
-  });};
+  });
+};
 
 export {renderBigPicture};
