@@ -2,7 +2,6 @@ const picturesContainer = document.querySelector('.pictures');
 const pictureTemplate = document.querySelector('#picture')
   .content
   .querySelector('.picture');
-
 let picturesListFragment = '';
 
 const createPicture = (data) => {

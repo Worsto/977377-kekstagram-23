@@ -52,7 +52,7 @@ const showBigPicture = (data) => {
   commentsList.appendChild(commentsListFragment);
   commentsListCount = commentsList.querySelectorAll('li').length;
 
-  const commentsRender = function() {
+  const commentsRender = () => {
     commentsListFragment.textContent = '';
 
     const commentsLeftCount = data.comments.length - commentsListCount;
