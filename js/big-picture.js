@@ -52,7 +52,7 @@ const showBigPicture = (data) => {
   commentsList.appendChild(commentsListFragment);
   commentsListCount = commentsList.querySelectorAll('li').length;
 
-  const commentsRender = () => {
+  const onLoadButtonClick = () => {
     commentsListFragment.textContent = '';
 
     const commentsLeftCount = data.comments.length - commentsListCount;
@@ -70,7 +70,7 @@ const showBigPicture = (data) => {
     }
   };
 
-  loadButton.addEventListener('click', commentsRender);
+  loadButton.addEventListener('click', onLoadButtonClick);
 
   bigPicture.classList.remove('hidden');
   document.body.classList.add('modal-open');
@@ -82,7 +82,7 @@ const showBigPicture = (data) => {
     bigPicture.classList.add('hidden');
     document.body.classList.remove('modal-open');
     document.removeEventListener('keydown', onPopupEscPress);
-    loadButton.removeEventListener('click', commentsRender);
+    loadButton.removeEventListener('click', onLoadButtonClick);
   }
 
   const onCloseClick = () => {

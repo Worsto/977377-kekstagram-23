@@ -64,7 +64,7 @@ const descriptionInput = imgUploadOverlay.querySelector('.text__description');
 const closeButton = imgUploadOverlay.querySelector('.img-upload__cancel');
 
 
-const changeImgScale = (evt) => {
+const onScaleChangerClick = (evt) => {
   let step = 0;
   let border;
 
@@ -78,7 +78,7 @@ const changeImgScale = (evt) => {
 
   if (scaleValue.value !== border) {
     scaleValue.value = `${+scaleValue.value.slice(0, -1) + step}%`;
-    image.style.transform = `scale(${+scaleValue.value.slice(0, -1) / 100})`;
+    image.style.transform = `scale(${+scaleValue.value.slice(0, -1) / PICTURE_SCALE_DEFAULT})`;
     if (scaleValue.value === `${PICTURE_SCALE_DEFAULT}%`) {
       image.style.transform = '';
     }
@@ -86,7 +86,7 @@ const changeImgScale = (evt) => {
 };
 
 
-const applyEffect = (evt) => {
+const onFormEffectChange = (evt) => {
   image.classList.remove(`effects__preview--${effect}`);
   effect = evt.target.value;
 
@@ -151,7 +151,7 @@ const onCloseClick = () => {
 
 const validateDescription = () => {
   const valueLength = descriptionInput.value.length;
-  const maxLength = descriptionInput.getAttribute('maxlength');
+  const maxLength = descriptionInput.maxlength;
   let customValidityMessage = '';
 
   if (valueLength > maxLength) {
@@ -202,25 +202,25 @@ const setPopupCloser = (status) => {
   const popup = document.querySelector(`.${status}`);
   const onEscPress = (evt) => {
     if (evt.key === 'Escape') {
-      closePopup();
+      onCloseButtonClick();
     }
   };
 
   const onVoidPress = (evt) => {
     if (evt.target.matches(`.${status}`)) {
-      closePopup();
+      onCloseButtonClick();
     }
   };
 
   // function declaration сделано для линтера
-  function closePopup() {
+  function onCloseButtonClick() {
     popup.classList.add('hidden');
     document.removeEventListener('keydown', onEscPress);
     document.removeEventListener('click', onVoidPress);
   }
 
   const button = document.querySelector(`.${status}__button`);
-  button.addEventListener('click', closePopup);
+  button.addEventListener('click', onCloseButtonClick);
   document.addEventListener('keydown', onEscPress);
   document.addEventListener('click', onVoidPress);
 };
@@ -251,13 +251,13 @@ const setFormError = () => {
   setPopupCloser('error');
 };
 
-const showImgUploadForm = () => {
+const onFileInputChange = () => {
   imgUploadOverlay.classList.remove('hidden');
   document.body.classList.add('modal-open');
   document.addEventListener('keydown', onPopupEscPress);
   effectFieldset.style.display = DEFAULT_EFFECT;
-  scaleChanger.addEventListener('click', changeImgScale);
-  formEffects.addEventListener('change', applyEffect);
+  scaleChanger.addEventListener('click', onScaleChangerClick);
+  formEffects.addEventListener('change', onFormEffectChange);
   closeButton.addEventListener('click', onCloseClick);
   descriptionInput.addEventListener('input', () => {
     validateDescription();
@@ -271,7 +271,7 @@ const showImgUploadForm = () => {
 };
 
 const setUploadButton = () => {
-  uploadFile.addEventListener('change', showImgUploadForm);
+  uploadFile.addEventListener('change', onFileInputChange);
 };
 
 export {setUploadButton};

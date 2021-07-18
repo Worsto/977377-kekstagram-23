@@ -1,14 +1,14 @@
 import {shuffleArray} from './utils/shuffle-array.js';
 
 const FILTER_RANDOM_COUNT = 10;
-
-const filters = document.querySelector('.img-filters');
-const filtersForm = filters.querySelector('.img-filters__form');
 const FilterNames = {
   DEFAULT: 'default',
   RANDOM: 'random',
   DISCUSSED: 'discussed',
 };
+
+const filters = document.querySelector('.img-filters');
+const filtersForm = filters.querySelector('.img-filters__form');
 
 const comparePictureComments = (pictureA, pictureB) => {
   const commentsA = pictureA.comments.length;
