@@ -10,7 +10,11 @@ const PICTURE_SCALE_MAX = 100;
 const PICTURE_SCALE_MIN = 25;
 const DEFAULT_EFFECT = 'none';
 
-
+const acceptedImageTypes = [
+  'image/gif',
+  'image/jpeg',
+  'image/png',
+];
 const imgForm = document.querySelector('.img-upload__form');
 const uploadFile = imgForm.querySelector('#upload-file');
 const imgUploadOverlay = imgForm.querySelector('.img-upload__overlay');
@@ -252,22 +256,28 @@ const setFormError = () => {
 };
 
 const onFileInputChange = () => {
-  imgUploadOverlay.classList.remove('hidden');
-  document.body.classList.add('modal-open');
-  document.addEventListener('keydown', onPopupEscPress);
-  effectFieldset.style.display = DEFAULT_EFFECT;
-  scaleChanger.addEventListener('click', onScaleChangerClick);
-  formEffects.addEventListener('change', onFormEffectChange);
-  closeButton.addEventListener('click', onCloseClick);
-  descriptionInput.addEventListener('input', () => {
-    validateDescription();
-    descriptionInput.reportValidity();
-  });
-  hashtagsInput.addEventListener('input', () => {
-    validateHashtags();
-    hashtagsInput.reportValidity();
-  });
-  setFormSubmit(setFormSuccess, setFormError);
+  const file = uploadFile.files[0];
+
+  if (acceptedImageTypes.includes(file['type'])) {
+    imgUploadOverlay.classList.remove('hidden');
+    document.body.classList.add('modal-open');
+    document.addEventListener('keydown', onPopupEscPress);
+    effectFieldset.style.display = DEFAULT_EFFECT;
+    scaleChanger.addEventListener('click', onScaleChangerClick);
+    formEffects.addEventListener('change', onFormEffectChange);
+    closeButton.addEventListener('click', onCloseClick);
+    descriptionInput.addEventListener('input', () => {
+      validateDescription();
+      descriptionInput.reportValidity();
+    });
+    hashtagsInput.addEventListener('input', () => {
+      validateHashtags();
+      hashtagsInput.reportValidity();
+    });
+    setFormSubmit(setFormSuccess, setFormError);
+  } else {
+    setFormError();
+  }
 };
 
 const setUploadButton = () => {
